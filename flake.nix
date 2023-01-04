@@ -30,12 +30,13 @@
                   # https://devenv.sh/reference/options/
                   packages = [
                     pkgs.git
-                    pkgs.darwin.apple_sdk.frameworks.Security
-                    pkgs.darwin.apple_sdk.frameworks.CoreFoundation
                     pkgs.libiconv
                     pkgs.ninja
                     pkgs.openssl.dev
-                  ];
+                  ] ++ (pkgs.lib.optionals pkgs.stdenv.isDarwin [
+                    pkgs.darwin.apple_sdk.frameworks.CoreFoundation
+                    pkgs.darwin.apple_sdk.frameworks.Security
+                  ]);
 
                   env.RUSTFLAGS = (builtins.map (l: ''-L ${l}/lib'') [
                     pkgs.libiconv
