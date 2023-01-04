@@ -10,3 +10,8 @@ target
 /windows.bazelrc
 /out
 node_modules
+result
+.devenv*
+/.cache
+/.pre-commit-config.yaml
+pyvenv.cfg
