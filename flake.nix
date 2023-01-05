@@ -48,6 +48,14 @@
                     pkgs.darwin.apple_sdk.frameworks.Security
                   ]);
 
+                  enterShell = ''
+                    [ -d ".vscode" ] && echo "Creating .vscode" || mkdir ".vscode"
+                    pushd ".vscode"
+                    [ -f extensions.json ] && echo "Linking extensions.json" || ln -sf ../.vscode.dist/extensions.json .
+                    [ -f settings.json ] && echo "Linking settings.json" || ln -sf ../.vscode.dist/settings.json .
+                    popd
+                  '';
+
                   env.RUSTFLAGS = (builtins.map (l: ''-L ${l}/lib'') [
                     pkgs.libiconv
                     pkgs.openssl.dev
@@ -69,10 +77,6 @@
                   languages.javascript.package = pkgs.nodejs;
                   languages.python.enable = true;
                   languages.typescript.enable = true;
-
-                  enterShell = ''
-                    git --version
-                  '';
                 }
               ];
             };
