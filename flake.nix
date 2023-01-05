@@ -48,6 +48,8 @@
                       frameworks.Security
                   ]));
 
+                  env.DISABLE_QT5_COMPAT = 1;
+
                   languages.rust = {
                     enable = true;
                     version = "stable";
