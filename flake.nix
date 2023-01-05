@@ -55,6 +55,8 @@
 
                   languages.javascript.enable = true;
                   languages.javascript.package = pkgs.nodejs;
+                  languages.python.enable = true;
+                  languages.typescript.enable = true;
 
                   enterShell = ''
                     git --version
