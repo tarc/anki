@@ -15,14 +15,21 @@
       forAllSystems = f: builtins.listToAttrs (map (name: { inherit name; value = f name; }) systems);
     in
     {
-      packages = forAllSystems(
-        system: let pkgs = import nixpkgs {
-          inherit system;
-        }; in {
-          default = pkgs.writeScriptBin "zeca" ''
-            echo bosta
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+          };
+        in
+        {
+          default = pkgs.writeScriptBin "build" ''
+            cargo build -p runner
+            zsh -c 'RELEASE=1 exec /Users/silvia/projects/anki/out/rust/debug/runner build wheels'
+            zsh -c 'RELEASE=1 exec /Users/silvia/projects/anki/out/rust/debug/runner build pylib/anki qt/aqt'
           '';
-      });
+        }
+      );
 
       devShells = forAllSystems
         (system:
@@ -41,7 +48,7 @@
                     pkgs.git
                     pkgs.libiconv
                     pkgs.ninja
-                    pkgs.openssl.dev
+                    pkgs.openssl
                     pkgs.yarn
                   ] ++ (pkgs.lib.optionals pkgs.stdenv.isDarwin [
                     pkgs.darwin.apple_sdk.frameworks.CoreFoundation
@@ -58,15 +65,20 @@
 
                   env.RUSTFLAGS = (builtins.map (l: ''-L ${l}/lib'') [
                     pkgs.libiconv
-                    pkgs.openssl.dev
+                    pkgs.openssl
                   ]) ++ (pkgs.lib.optionals pkgs.stdenv.isDarwin
                     (with pkgs.darwin.apple_sdk; builtins.map (l: ''-L framework=${l}/Library/Frameworks'') [
                       frameworks.CoreFoundation
                       frameworks.Security
-                  ]));
+                    ]));
 
                   env.DISABLE_QT5_COMPAT = 1;
                   env.RELEASE = 1;
+                  env.PYTHONWARNINGS = "default";
+                  env.PYTHONPYCACHEPREFIX = "out/pycache";
+                  env.out = (builtins.getEnv "PWD") + "/out";
+                  env.CARGO_TARGET_DIR = (builtins.getEnv "PWD") + "/out/rust";
+                  env.RECONFIGURE_KEY = ";";
 
                   languages.rust = {
                     enable = true;
@@ -81,5 +93,5 @@
               ];
             };
           });
-      };
+    };
 }
