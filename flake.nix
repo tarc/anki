@@ -15,6 +15,15 @@
       forAllSystems = f: builtins.listToAttrs (map (name: { inherit name; value = f name; }) systems);
     in
     {
+      packages = forAllSystems(
+        system: let pkgs = import nixpkgs {
+          inherit system;
+        }; in {
+          default = pkgs.writeScriptBin "zeca" ''
+            echo bosta
+          '';
+      });
+
       devShells = forAllSystems
         (system:
           let
@@ -67,5 +76,5 @@
               ];
             };
           });
-    };
+      };
 }
