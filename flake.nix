@@ -33,6 +33,7 @@
                     pkgs.libiconv
                     pkgs.ninja
                     pkgs.openssl.dev
+                    pkgs.yarn
                   ] ++ (pkgs.lib.optionals pkgs.stdenv.isDarwin [
                     pkgs.darwin.apple_sdk.frameworks.CoreFoundation
                     pkgs.darwin.apple_sdk.frameworks.Security
@@ -51,6 +52,9 @@
                     enable = true;
                     version = "stable";
                   };
+
+                  languages.javascript.enable = true;
+                  languages.javascript.package = pkgs.nodejs;
 
                   enterShell = ''
                     git --version
